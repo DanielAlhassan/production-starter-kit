@@ -1,0 +1,11 @@
+# Runs the house style check on every commit.
+# Change "src" to the package folder of this repo.
+repos:
+  - repo: local
+    hooks:
+      - id: house-style
+        name: house style check
+        entry: python tools/check_style.py src
+        language: system
+        pass_filenames: false
+        types: [python]
