@@ -12,15 +12,22 @@ DRAWING_NS = {"a": "http://schemas.openxmlformats.org/drawingml/2006/main"}
 def main() -> None:
     """Read the company template and write brand.yaml and a draft layout_map.yaml.
 
-    Usage: python inspect_template.py <template.pptx> <skill folder>
+    Usage: python inspect_template.py <template.pptx> [output folder]
+    The output folder defaults to the skill folder.
     brand.yaml holds the theme colors and fonts from the slide master. It is
     the single brand source for decks, and later for Word and Excel outputs.
     layout_map.yaml maps each slide layout to roles (title, subtitle, body,
     body_2, picture, chart, table) and placeholder idx. Keep the layouts you
     use, rename keys if you want, and delete the rest.
     """
+    if len(sys.argv) < 2:
+        sys.exit("Usage: python inspect_template.py <template.pptx> [output folder]")
     template = Path(sys.argv[1])
-    out_dir = Path(sys.argv[2])
+    out_dir = (
+        Path(sys.argv[2])
+        if len(sys.argv) > 2
+        else Path(__file__).resolve().parent.parent
+    )
     deck = Presentation(template)
 
     theme_part = deck.slide_master.part.part_related_by(RT.THEME)
