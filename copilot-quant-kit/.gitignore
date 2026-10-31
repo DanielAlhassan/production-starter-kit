@@ -1,3 +1,7 @@
 .copilot-audit/
-recon/results/
+data/output/recon/
 __pycache__/
+.github/skills/company-deck/assets/*.pptx
+.github/skills/company-deck/assets/*.potx
+.github/skills/company-deck/brand.yaml
+.github/skills/company-deck/layout_map.yaml

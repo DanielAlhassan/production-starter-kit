@@ -49,6 +49,7 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
     model-documentation/           MRM documentation template and procedure
     stakeholder-update/            3-slide deck, status email
     workflow-evidence/             summarize_audit.py: counts from the audit log (blocks, issues caught, checks run)
+    company-deck/                  Decks in the company template: inspect_template.py (brand.yaml, layout_map.yaml), render_deck.py (deck YAML to .pptx)
   agents/
     model-builder.agent.md         Runs a spec from your brain dump agent, small steps, change record at the end
     model-reviewer.agent.md        Read-only validator-style review
@@ -70,11 +71,15 @@ The kit does not replace your files. It adds to your brain dump agent, `python.i
 
 1. Copy `.github/` into the repo root. Merge folders. Do not overwrite your own files.
 2. Paste the block from `copilot-instructions-additions.md` into `.github/copilot-instructions.md`.
-3. Install the tools: `pip install ruff pytest pandas openpyxl pyyaml`.
+3. Install the tools: `pip install ruff pytest pandas openpyxl pyyaml python-pptx`.
 4. Add to `.gitignore`:
    ```
    .copilot-audit/
    data/output/recon/
+   data/output/decks/
+   .github/skills/company-deck/assets/*.pptx
+   .github/skills/company-deck/brand.yaml
+   .github/skills/company-deck/layout_map.yaml
    ```
 5. Check `.github/hooks/scripts/hook_policy.json`. Change `protected_paths` to match your folders. The `*` in a pattern also matches subfolders.
 6. In VS Code, open Chat, set **Session Target** to **Copilot**, then type `/hooks`. You see `model-guardrails.json`. If hooks do not show, your enterprise settings can disable them. Ask IT.

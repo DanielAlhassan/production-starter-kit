@@ -1,0 +1,28 @@
+output: out/loss_model_update.pptx
+slides:
+  - layout: title_and_content
+    title: Loss model refactor complete, numbers unchanged
+    body:
+      - Loss model moved from Excel and notebook to one Python run()
+      - 1,440 values compared with the baseline, 0 breaches
+      - Input, implementation, and output controls added
+    notes: "Source: data/output/recon/20261107_101500/summary.csv"
+  - layout: two_content
+    title: What was done and how
+    body:
+      - Read inputs from data/input, settings from YAML
+      - One step file per calculation, called by run()
+      - Hooks checked every edit and ran the model before finish
+    body_2:
+      table:
+        columns: [Check, Result]
+        rows: [[Unit tests, PASS], [Reconciliation, PASS], [Edits blocked, "6"]]
+  - layout: title_and_content
+    title: Why it matters
+    body:
+      chart:
+        type: column
+        categories: [Before, After]
+        series: {Hours per run: [6, 0.5]}
+        number_format: "0.0"
+    notes: "Hours are the user's estimate."

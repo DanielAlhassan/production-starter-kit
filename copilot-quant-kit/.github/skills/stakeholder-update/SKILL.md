@@ -18,7 +18,7 @@ The reader is busy and not technical. Show the result, the method in brief, and 
 2. **What was done and how.** Steps in plain words. One simple diagram or table if it helps. No code.
 3. **Why it matters.** Impact in time saved, risk reduced, controls added, or decisions made possible. Use numbers only when they come from a file. Name the source in the speaker notes.
 
-If the repo has a deck script with the company template (python-pptx), write the slide content as data for that script. Do not build a layout in code.
+Build the deck with the company-deck skill: write the 3 slides as a deck YAML file and run its renderer. Do not build slides any other way.
 
 ## Email
 
