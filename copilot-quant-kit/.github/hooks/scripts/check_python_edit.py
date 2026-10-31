@@ -1,10 +1,10 @@
 import hashlib
-import json
 import sys
 from pathlib import Path
 
 from hook_common import (
     extract_paths,
+    print_output,
     read_event,
     read_policy,
     run_checks,
@@ -59,13 +59,8 @@ def main() -> None:
         print("{}")
         return
     report = "\n\n".join(notes)[: policy["max_report_chars"]]
-    print(
-        json.dumps(
-            {
-                "additionalContext": f"Post-edit checks:\n{report}\nFix every error before you continue."
-            }
-        )
-    )
+    context = f"Post-edit checks:\n{report}\nFix every error before you continue."
+    print_output("PostToolUse", {"additionalContext": context})
 
 
 if __name__ == "__main__":

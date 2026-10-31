@@ -1,10 +1,10 @@
-import json
 import re
 import sys
 from fnmatch import fnmatch
 
 from hook_common import (
     extract_paths,
+    print_output,
     read_event,
     read_policy,
     read_tool_args,
@@ -67,7 +67,7 @@ def main() -> None:
             "decision": decision.get("permissionDecision", "default"),
         },
     )
-    print(json.dumps(decision))
+    print_output("PreToolUse", decision)
 
 
 if __name__ == "__main__":

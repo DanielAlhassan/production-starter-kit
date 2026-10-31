@@ -28,43 +28,66 @@ def read_tool_args(event: dict) -> dict:
 
 
 def extract_paths(event: dict) -> list[str]:
-    # Argument names differ by tool, so scan the common keys and the headers of apply_patch text.
-    args = read_tool_args(event)
+    # Tools name their path arguments differently and can nest them (multi-file edits),
+    # so walk all arguments and also read the file headers of apply_patch text.
     root = Path(event.get("cwd") or ".").resolve()
-    found = []
-    for key in (
+    path_keys = {
         "path",
-        "filePath",
+        "filepath",
         "file_path",
         "filename",
         "target",
         "paths",
         "files",
-    ):
-        value = args.get(key)
-        found.extend(value if isinstance(value, list) else [value] if value else [])
-    for key in ("patch", "input", "raw"):
-        text = args.get(key)
-        if isinstance(text, str):
-            for line in text.splitlines():
-                for marker in (
-                    "*** Update File: ",
-                    "*** Add File: ",
-                    "*** Delete File: ",
-                ):
-                    if line.startswith(marker):
-                        found.append(line[len(marker) :].strip())
+        "uri",
+    }
+    found = []
+    stack = [read_tool_args(event)]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, list):
+            stack.extend(item)
+            continue
+        if not isinstance(item, dict):
+            continue
+        for key, value in item.items():
+            if key.lower() in path_keys:
+                found.extend(value if isinstance(value, list) else [value])
+            elif isinstance(value, (dict, list)):
+                stack.append(value)
+            elif isinstance(value, str) and "*** " in value:
+                for line in value.splitlines():
+                    for marker in (
+                        "*** Update File: ",
+                        "*** Add File: ",
+                        "*** Delete File: ",
+                    ):
+                        if line.startswith(marker):
+                            found.append(line[len(marker) :].strip())
     paths = []
     for item in found:
-        if not isinstance(item, str):
+        if not isinstance(item, str) or not item:
             continue
-        path = Path(item)
+        path = Path(item.removeprefix("file://"))
         path = path if path.is_absolute() else root / path
         try:
             paths.append(path.resolve().relative_to(root).as_posix())
         except ValueError:
             paths.append(path.resolve().as_posix())
     return paths
+
+
+def print_output(event_name: str, fields: dict) -> None:
+    # The Copilot harness reads top-level fields. The Local harness reads hookSpecificOutput.
+    # Send both, so the same script works in either session target.
+    if not fields:
+        print("{}")
+        return
+    print(
+        json.dumps(
+            {**fields, "hookSpecificOutput": {"hookEventName": event_name, **fields}}
+        )
+    )
 
 
 def write_audit(policy: dict, event: dict, record: dict) -> None:
@@ -80,13 +103,14 @@ def write_audit(policy: dict, event: dict, record: dict) -> None:
 
 
 def run_checks(checks: list[dict], cwd: str, path: str = "") -> list[str]:
-    # A check is skipped when its when_path_exists file or its executable is missing.
+    # A check is skipped when a when_path_exists file (one path or a list) or its executable is missing.
     # "~" in a command or path means the user folder, for checks that live at user level.
     failures = []
     root = Path(cwd or ".")
     for check in checks:
-        required = check.get("when_path_exists")
-        if required and not (root / Path(required).expanduser()).exists():
+        required = check.get("when_path_exists", [])
+        required = [required] if isinstance(required, str) else required
+        if not all((root / Path(r).expanduser()).exists() for r in required):
             continue
         parts = [
             str(Path(part).expanduser()) if part.startswith("~") else part

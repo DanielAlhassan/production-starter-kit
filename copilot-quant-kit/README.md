@@ -37,7 +37,10 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
       guard_tool_use.py            preToolUse: blocks edits to data/input, assets, baselines, Excel, hook files; blocks push, hard reset, recursive delete, network calls; asks before pip install, commit, merge; logs every call
       check_python_edit.py         postToolUse: ruff lint, ruff format, and tools/check_style.py on each edited .py file; sends errors back to the agent
       run_stop_checks.py           agentStop: runs pytest, the driver, and output reconciliation before the agent can finish; stops after 2 failed fix attempts and reports
-      hook_common.py               Shared functions for the three scripts
+      add_session_context.py       sessionStart: sends the "## Current state" section of docs/decision_log.md and the last reconciliation status (capped at 1,200 characters; nothing if neither exists)
+      log_user_prompt.py           userPromptSubmitted: writes each prompt to the audit log (first 500 characters)
+      add_subagent_rules.py        subagentStart: gives each subagent the core project rules from hook_policy.json
+      hook_common.py               Shared functions for the hook scripts
   instructions/
     model-structure.instructions.md   Your layout (data, assets, settings, src/run.py, assembly) and the three control types (*.py, *.yaml)
     writing.instructions.md           All prose goes through the STE skill (*.md, *.txt)
@@ -45,6 +48,7 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
     model-reconciliation/          compare_outputs.py and recon_template.yaml: baseline vs new outputs, value by value, with tolerances
     model-documentation/           MRM documentation template and procedure
     stakeholder-update/            3-slide deck, status email
+    workflow-evidence/             summarize_audit.py: counts from the audit log (blocks, issues caught, checks run)
   agents/
     model-builder.agent.md         Runs a spec from your brain dump agent, small steps, change record at the end
     model-reviewer.agent.md        Read-only validator-style review
@@ -52,7 +56,11 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
     scaffold-model.prompt.md       /scaffold-model: new repo layout, or add a model to the package (src/<model>, switchboard, settings)
     review-model.prompt.md         /review-model src/deposits
     change-record.prompt.md        /change-record
-user-hooks/model-guardrails.json   Hook config for user-level install (absolute paths)
+    reconcile.prompt.md            /reconcile: run the model, compare with baseline, summarize
+    workflow-evidence.prompt.md    /workflow-evidence 2026-11-01
+    data-dictionary.prompt.md      /data-dictionary data/output
+user-hooks/model-guardrails.json   Hook config for user-level install (finds the scripts in the user folder from any shell)
+WORKFLOW.md                        One-page cheat sheet: which command in which phase
 copilot-instructions-additions.md  Lines to paste into your existing copilot-instructions.md
 ```
 
@@ -78,6 +86,8 @@ Use this to have the guardrails in every project on your machine.
 
 1. Copy `user-hooks/model-guardrails.json` to `%USERPROFILE%\.copilot\hooks\`.
 2. Copy all files from `.github/hooks/scripts/` to `%USERPROFILE%\.copilot\hooks\scripts\`.
+
+The scripts write output in both formats: the Copilot session target and the Local session target. Session Start, User Prompt Submit, Pre-Tool Use, Post-Tool Use, and Stop run in both. Subagent Start runs in Local. To give each new session the project state, keep a `## Current state` section in `docs/decision_log.md` (current commit, open items, verified commands, file owners, baselines).
 3. Do not use the project version of `model-guardrails.json` at user level. Its paths (`.github/hooks/scripts/...`) are relative to the project. In a project without those files, Python cannot find the script, the Pre-Tool Use hook fails, and a failed Pre-Tool Use hook blocks every tool call.
 4. The house style check runs from `~/.copilot/skills/python-house-style/check_style.py`. If your skill folder has another name, change the path in `hook_policy.json`. If `check_style.py` reads the terms CSV with a path relative to the repo, change it to a path relative to the script: `Path(__file__).with_name("house_style_terms.csv")`.
 5. If you set `COPILOT_HOME`, use that folder instead of `%USERPROFILE%\.copilot`.

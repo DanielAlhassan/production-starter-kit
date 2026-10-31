@@ -1,27 +1,45 @@
 {
   "version": 1,
   "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "python -c \"import os,sys,runpy;d=os.path.expanduser('~/.copilot/hooks/scripts');sys.path.insert(0,d);runpy.run_path(os.path.join(d,'add_session_context.py'),run_name='__main__')\"",
+        "timeoutSec": 10
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "command": "python -c \"import os,sys,runpy;d=os.path.expanduser('~/.copilot/hooks/scripts');sys.path.insert(0,d);runpy.run_path(os.path.join(d,'log_user_prompt.py'),run_name='__main__')\"",
+        "timeoutSec": 10
+      }
+    ],
     "preToolUse": [
       {
         "type": "command",
-        "powershell": "python \"$env:USERPROFILE\\.copilot\\hooks\\scripts\\guard_tool_use.py\"",
-        "bash": "python \"$HOME/.copilot/hooks/scripts/guard_tool_use.py\"",
+        "command": "python -c \"import os,sys,runpy;d=os.path.expanduser('~/.copilot/hooks/scripts');sys.path.insert(0,d);runpy.run_path(os.path.join(d,'guard_tool_use.py'),run_name='__main__')\"",
         "timeoutSec": 10
       }
     ],
     "postToolUse": [
       {
         "type": "command",
-        "powershell": "python \"$env:USERPROFILE\\.copilot\\hooks\\scripts\\check_python_edit.py\"",
-        "bash": "python \"$HOME/.copilot/hooks/scripts/check_python_edit.py\"",
+        "command": "python -c \"import os,sys,runpy;d=os.path.expanduser('~/.copilot/hooks/scripts');sys.path.insert(0,d);runpy.run_path(os.path.join(d,'check_python_edit.py'),run_name='__main__')\"",
         "timeoutSec": 90
+      }
+    ],
+    "subagentStart": [
+      {
+        "type": "command",
+        "command": "python -c \"import os,sys,runpy;d=os.path.expanduser('~/.copilot/hooks/scripts');sys.path.insert(0,d);runpy.run_path(os.path.join(d,'add_subagent_rules.py'),run_name='__main__')\"",
+        "timeoutSec": 10
       }
     ],
     "agentStop": [
       {
         "type": "command",
-        "powershell": "python \"$env:USERPROFILE\\.copilot\\hooks\\scripts\\run_stop_checks.py\"",
-        "bash": "python \"$HOME/.copilot/hooks/scripts/run_stop_checks.py\"",
+        "command": "python -c \"import os,sys,runpy;d=os.path.expanduser('~/.copilot/hooks/scripts');sys.path.insert(0,d);runpy.run_path(os.path.join(d,'run_stop_checks.py'),run_name='__main__')\"",
         "timeoutSec": 1300
       }
     ]

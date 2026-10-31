@@ -48,8 +48,15 @@
   "stop_checks": [
     {"name": "unit tests", "command": "python -m pytest -q -x --no-header -p no:cacheprovider", "when_path_exists": "tests", "timeout_sec": 300, "pass_exit_codes": [0, 5]},
     {"name": "model run", "command": "python -m assembly.driver", "when_path_exists": "assembly/driver.py", "timeout_sec": 600},
-    {"name": "output reconciliation", "command": "python .github/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": "settings/recon.yaml", "timeout_sec": 300}
+    {"name": "output reconciliation", "command": "python .github/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": ["settings/recon.yaml", ".github/skills/model-reconciliation/scripts/compare_outputs.py"], "timeout_sec": 300},
+    {"name": "output reconciliation (user skill)", "command": "python ~/.copilot/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": ["settings/recon.yaml", "~/.copilot/skills/model-reconciliation/scripts/compare_outputs.py"], "timeout_sec": 300}
   ],
+  "handoff_files": ["docs/decision_log.md", "decision_log.md"],
+  "handoff_heading": "## Current state",
+  "handoff_max_chars": 1200,
+  "recon_results_dir": "data/output/recon",
+  "prompt_log_chars": 500,
+  "subagent_rules": "Project rules: Follow .github/copilot-instructions.md. Layout: data/input, data/output, assets (read only), settings (YAML), src/run.py, assembly/driver.py and switchboard.py. Do not edit data/input, assets, data/output/baseline, or Excel files. Do only the task you were given. Return short findings with file:line. No em dashes.",
   "max_stop_retries": 2,
   "max_report_chars": 3000
 }

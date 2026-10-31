@@ -1,8 +1,7 @@
-import json
 import sys
 from pathlib import Path
 
-from hook_common import read_event, read_policy, run_checks, write_audit
+from hook_common import print_output, read_event, read_policy, run_checks, write_audit
 
 
 def main() -> None:
@@ -64,7 +63,7 @@ def main() -> None:
             "Do not loosen tests, tolerances, or baselines to make them pass.\n"
             + report
         )
-    print(json.dumps({"decision": "block", "reason": reason}))
+    print_output("Stop", {"decision": "block", "reason": reason})
 
 
 if __name__ == "__main__":
