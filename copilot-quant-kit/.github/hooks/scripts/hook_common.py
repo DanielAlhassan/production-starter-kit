@@ -81,13 +81,17 @@ def write_audit(policy: dict, event: dict, record: dict) -> None:
 
 def run_checks(checks: list[dict], cwd: str, path: str = "") -> list[str]:
     # A check is skipped when its when_path_exists file or its executable is missing.
+    # "~" in a command or path means the user folder, for checks that live at user level.
     failures = []
     root = Path(cwd or ".")
     for check in checks:
         required = check.get("when_path_exists")
-        if required and not (root / required).exists():
+        if required and not (root / Path(required).expanduser()).exists():
             continue
-        parts = shlex.split(check["command"].replace("{path}", path))
+        parts = [
+            str(Path(part).expanduser()) if part.startswith("~") else part
+            for part in shlex.split(check["command"].replace("{path}", path))
+        ]
         if parts[0] == "python":
             parts[0] = sys.executable
         try:

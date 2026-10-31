@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "powershell": "python \"$env:USERPROFILE\\.copilot\\hooks\\scripts\\guard_tool_use.py\"",
+        "bash": "python \"$HOME/.copilot/hooks/scripts/guard_tool_use.py\"",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "powershell": "python \"$env:USERPROFILE\\.copilot\\hooks\\scripts\\check_python_edit.py\"",
+        "bash": "python \"$HOME/.copilot/hooks/scripts/check_python_edit.py\"",
+        "timeoutSec": 90
+      }
+    ],
+    "agentStop": [
+      {
+        "type": "command",
+        "powershell": "python \"$env:USERPROFILE\\.copilot\\hooks\\scripts\\run_stop_checks.py\"",
+        "bash": "python \"$HOME/.copilot/hooks/scripts/run_stop_checks.py\"",
+        "timeoutSec": 1300
+      }
+    ]
+  }
+}

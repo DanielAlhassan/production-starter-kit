@@ -52,6 +52,7 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
     scaffold-model.prompt.md       /scaffold-model: new repo layout, or add a model to the package (src/<model>, switchboard, settings)
     review-model.prompt.md         /review-model src/deposits
     change-record.prompt.md        /change-record
+user-hooks/model-guardrails.json   Hook config for user-level install (absolute paths)
 copilot-instructions-additions.md  Lines to paste into your existing copilot-instructions.md
 ```
 
@@ -70,6 +71,19 @@ The kit does not replace your files. It adds to your brain dump agent, `python.i
 5. Check `.github/hooks/scripts/hook_policy.json`. Change `protected_paths` to match your folders. The `*` in a pattern also matches subfolders.
 6. In VS Code, open Chat, set **Session Target** to **Copilot**, then type `/hooks`. You see `model-guardrails.json`. If hooks do not show, your enterprise settings can disable them. Ask IT.
 7. On Windows, if `python` does not start Python, change `python` to `py` in `model-guardrails.json`.
+
+## Install at user level (all projects)
+
+Use this to have the guardrails in every project on your machine.
+
+1. Copy `user-hooks/model-guardrails.json` to `%USERPROFILE%\.copilot\hooks\`.
+2. Copy all files from `.github/hooks/scripts/` to `%USERPROFILE%\.copilot\hooks\scripts\`.
+3. Do not use the project version of `model-guardrails.json` at user level. Its paths (`.github/hooks/scripts/...`) are relative to the project. In a project without those files, Python cannot find the script, the Pre-Tool Use hook fails, and a failed Pre-Tool Use hook blocks every tool call.
+4. The house style check runs from `~/.copilot/skills/python-house-style/check_style.py`. If your skill folder has another name, change the path in `hook_policy.json`. If `check_style.py` reads the terms CSV with a path relative to the repo, change it to a path relative to the script: `Path(__file__).with_name("house_style_terms.csv")`.
+5. If you set `COPILOT_HOME`, use that folder instead of `%USERPROFILE%\.copilot`.
+6. Do not install the same hooks at user and project level. Both run, so every check runs twice.
+
+The reconciliation stays at project level (`.github/skills/model-reconciliation/` and `settings/recon.yaml`). The stop hook skips it in a project that does not have these files.
 
 ## Smoke test (5 minutes)
 

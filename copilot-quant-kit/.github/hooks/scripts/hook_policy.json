@@ -4,6 +4,8 @@
   "shell_tool_words": ["bash", "powershell", "shell", "terminal", "execute"],
   "protected_paths": [
     ".github/hooks/*",
+    "*/.copilot/hooks/*",
+    "*/.copilot/skills/*",
     "tools/house_style_terms.csv",
     "tools/check_style.py",
     "data/input/*",
@@ -40,7 +42,8 @@
   "post_edit_checks": [
     {"name": "ruff lint", "command": "ruff check --fix {path}"},
     {"name": "ruff format", "command": "ruff format {path}"},
-    {"name": "house style", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
+    {"name": "house style", "command": "python ~/.copilot/skills/python-house-style/check_style.py {path}", "when_path_exists": "~/.copilot/skills/python-house-style/check_style.py"},
+    {"name": "house style (repo copy)", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
   ],
   "stop_checks": [
     {"name": "unit tests", "command": "python -m pytest -q -x --no-header -p no:cacheprovider", "when_path_exists": "tests", "timeout_sec": 300, "pass_exit_codes": [0, 5]},
