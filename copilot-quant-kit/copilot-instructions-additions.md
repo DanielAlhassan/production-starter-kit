@@ -8,7 +8,8 @@ Paste the block below into your existing `.github/copilot-instructions.md`. Do n
 - Plan first for any change that touches more than one function. Wait for approval.
 - Make small changes. After each change, read the hook messages and fix what they report.
 - Never change model numbers silently. After a change to calculation code, run the model-reconciliation skill and report PASS or FAIL per output.
-- Do not edit inputs, baselines, Excel files, or `.github/hooks/`. Hooks block this. Ask the user.
+- Layout: `data/input`, `data/output`, `assets` (stable methodology files), `settings` (YAML), `src/run.py` with one `run()`, and `assembly/driver.py` plus `assembly/switchboard.py` for a package. Follow the model-structure instructions.
+- Do not edit `data/input/`, `assets/`, `data/output/baseline/`, Excel files, or `.github/hooks/`. Hooks block this. Ask the user.
 - Say what you checked and what you did not check. Do not say "done" if a check failed or did not run.
 
 ## Writing

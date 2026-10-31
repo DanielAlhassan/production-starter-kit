@@ -1,0 +1,17 @@
+# Copy to settings/recon.yaml. One entry per output file.
+# A value breaches only when it exceeds both abs_tol and rel_tol.
+results_dir: data/output/recon
+pairs:
+  - name: loss_forecast
+    baseline: data/output/baseline/loss_forecast.csv
+    candidate: data/output/loss_forecast.csv
+    keys: [scenario, region, quarter]
+    abs_tol: 1.0e-6
+    rel_tol: 1.0e-9
+  - name: dcf_values
+    baseline: data/output/baseline/dcf_output.xlsx
+    candidate: data/output/dcf_output.xlsx
+    sheet: valuation
+    keys: [scenario, entity]
+    abs_tol: 0.001
+    rel_tol: 1.0e-6

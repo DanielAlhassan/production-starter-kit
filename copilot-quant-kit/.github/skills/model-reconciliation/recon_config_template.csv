@@ -1,3 +1,0 @@
-name,baseline,candidate,keys,abs_tol,rel_tol,sheet
-loss_forecast,recon/baseline/loss_forecast.csv,output/loss_forecast.csv,scenario;region;quarter,1e-6,1e-9,
-dcf_values,recon/baseline/dcf_output.xlsx,output/dcf_output.xlsx,scenario;entity,0.001,1e-6,valuation

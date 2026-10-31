@@ -9,8 +9,8 @@ Documentation must let a validator rerun and challenge the model without asking 
 
 ## Steps
 
-1. Read the code first: `run_<module>.py`, the calc files, the controls, `config/`, and `data_dictionary.xlsx`. Do not describe what the code does not do.
-2. Copy `template.md` to `docs/<module>.md`, or update the existing file. Keep the section order.
+1. Read the code first: `assembly/driver.py` and `assembly/switchboard.py` (package), `run.py` and the step files in `src/`, the controls, the YAML files in `settings/`, and the files in `assets/` (including the data dictionary). Do not describe what the code does not do.
+2. Copy `template.md` to `docs/<model>.md`, or update the existing file. Keep the section order.
 3. Fill each section from the code and config. Where a fact is not in the code (owner, business purpose, approvals), write `[TO CONFIRM: question]`. Do not invent it.
 4. Write in STE-flavored mode with the ASD-STE100 writing skill. Use strict mode for the run steps and the controls tables.
 5. Every number in the document comes from a file. Name the file. Do not type numbers from memory.

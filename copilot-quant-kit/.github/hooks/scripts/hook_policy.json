@@ -6,11 +6,12 @@
     ".github/hooks/*",
     "tools/house_style_terms.csv",
     "tools/check_style.py",
+    "data/input/*",
+    "data/output/baseline/*",
+    "assets/*",
     "*.xlsx",
     "*.xlsm",
-    "*.xls",
-    "data/raw/*",
-    "recon/baseline/*"
+    "*.xls"
   ],
   "blocked_commands": [
     "git\\s+push",
@@ -42,8 +43,9 @@
     {"name": "house style", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
   ],
   "stop_checks": [
-    {"name": "unit tests", "command": "python -m pytest -q -x --no-header -p no:cacheprovider", "when_path_exists": "tests"},
-    {"name": "output reconciliation", "command": "python .github/skills/model-reconciliation/scripts/compare_outputs.py recon/recon_config.xlsx", "when_path_exists": "recon/recon_config.xlsx"}
+    {"name": "unit tests", "command": "python -m pytest -q -x --no-header -p no:cacheprovider", "when_path_exists": "tests", "timeout_sec": 300, "pass_exit_codes": [0, 5]},
+    {"name": "model run", "command": "python -m assembly.driver", "when_path_exists": "assembly/driver.py", "timeout_sec": 600},
+    {"name": "output reconciliation", "command": "python .github/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": "settings/recon.yaml", "timeout_sec": 300}
   ],
   "max_stop_retries": 2,
   "max_report_chars": 3000

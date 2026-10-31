@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 
 
 def read_table(path: Path, sheet: object = None) -> pd.DataFrame:
@@ -16,7 +17,7 @@ def read_table(path: Path, sheet: object = None) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
-def compare_pair(pair: pd.Series) -> tuple[dict, pd.DataFrame]:
+def compare_pair(pair: dict) -> tuple[dict, pd.DataFrame]:
     summary = {"name": pair["name"], "status": "FAIL", "note": ""}
     base_path, cand_path = Path(pair["baseline"]), Path(pair["candidate"])
     missing = [str(p) for p in (base_path, cand_path) if not p.exists()]
@@ -26,7 +27,7 @@ def compare_pair(pair: pd.Series) -> tuple[dict, pd.DataFrame]:
 
     base = read_table(base_path, pair.get("sheet"))
     cand = read_table(cand_path, pair.get("sheet"))
-    keys = [k.strip() for k in str(pair["keys"]).split(";") if k.strip()]
+    keys = list(pair["keys"])
     abs_tol = float(pair["abs_tol"])
     rel_tol = float(pair["rel_tol"])
 
@@ -102,21 +103,20 @@ def compare_pair(pair: pd.Series) -> tuple[dict, pd.DataFrame]:
 def main() -> None:
     """Compare candidate model outputs with baseline outputs, value by value.
 
-    Usage: python compare_outputs.py <recon_config.xlsx | .csv>
-    Each config row names one output pair: name, baseline, candidate, keys
-    (semicolon separated), abs_tol, rel_tol, and an optional sheet. A value
-    breaches only when it exceeds both abs_tol and rel_tol. Writes summary.csv
-    and breaches.csv to recon/results/<timestamp>/ next to the config, prints
-    the summary, and exits with 1 if any pair fails.
+    Usage: python compare_outputs.py settings/recon.yaml
+    Each entry in `pairs` names one output: name, baseline, candidate, keys,
+    abs_tol, rel_tol, and an optional sheet. A value breaches only when it
+    exceeds both abs_tol and rel_tol. Writes summary.csv and breaches.csv to
+    <results_dir>/<timestamp>/, prints the summary, and exits with 1 if any
+    pair fails. Paths are relative to the repo root.
     """
-    config_path = Path(sys.argv[1])
-    config = read_table(config_path)
-    results = [compare_pair(pair) for _, pair in config.iterrows()]
+    config = yaml.safe_load(Path(sys.argv[1]).read_text(encoding="utf-8"))
+    results = [compare_pair(pair) for pair in config["pairs"]]
     summary = pd.DataFrame([r[0] for r in results])
     details = [r[1] for r in results if len(r[1])]
     detail = pd.concat(details, ignore_index=True) if details else pd.DataFrame()
 
-    out_dir = config_path.parent / "results" / datetime.now().strftime("%Y%m%d_%H%M%S")
+    out_dir = Path(config["results_dir"]) / datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir.mkdir(parents=True, exist_ok=True)
     summary.to_csv(out_dir / "summary.csv", index=False)
     detail.to_csv(out_dir / "breaches.csv", index=False)

@@ -96,12 +96,17 @@ def run_checks(checks: list[dict], cwd: str, path: str = "") -> list[str]:
                 cwd=root,
                 capture_output=True,
                 text=True,
-                timeout=600,
+                timeout=check.get("timeout_sec", 120),
                 check=False,
             )
         except FileNotFoundError:
             continue
-        if result.returncode != 0:
+        except subprocess.TimeoutExpired:
+            failures.append(
+                f"[{check['name']}] stopped after {check.get('timeout_sec', 120)} s"
+            )
+            continue
+        if result.returncode not in check.get("pass_exit_codes", [0]):
             failures.append(
                 f"[{check['name']}] exit {result.returncode}\n{result.stdout}{result.stderr}".strip()
             )

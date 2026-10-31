@@ -19,7 +19,7 @@
       {
         "type": "command",
         "command": "python .github/hooks/scripts/run_stop_checks.py",
-        "timeoutSec": 900
+        "timeoutSec": 1300
       }
     ]
   }

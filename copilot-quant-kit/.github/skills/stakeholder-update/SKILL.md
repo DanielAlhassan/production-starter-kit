@@ -9,7 +9,7 @@ The reader is busy and not technical. Show the result, the method in brief, and 
 
 ## Inputs to read first
 
-- The Git log and diff for the work period, the change records, and the latest `recon/results/` summary.
+- The Git log and diff for the work period, the change records, and the latest summary in `data/output/recon/`.
 - Ask the user for the audience and the date range if they are not clear.
 
 ## Deck: 3 slides maximum
