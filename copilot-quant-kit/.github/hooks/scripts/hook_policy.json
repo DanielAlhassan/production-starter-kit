@@ -1,0 +1,50 @@
+{
+  "audit_dir": ".copilot-audit",
+  "edit_tool_words": ["edit", "create", "write", "replace", "patch", "delete", "rename", "move", "insert"],
+  "shell_tool_words": ["bash", "powershell", "shell", "terminal", "execute"],
+  "protected_paths": [
+    ".github/hooks/*",
+    "tools/house_style_terms.csv",
+    "tools/check_style.py",
+    "*.xlsx",
+    "*.xlsm",
+    "*.xls",
+    "data/raw/*",
+    "recon/baseline/*"
+  ],
+  "blocked_commands": [
+    "git\\s+push",
+    "git\\s+reset\\s+--hard",
+    "git\\s+clean",
+    "rm\\s+-[a-z]*r",
+    "Remove-Item\\b.*-Recurse",
+    "\\brmdir\\b",
+    "\\bdel\\s+/s",
+    "\\bcurl\\b",
+    "\\bwget\\b",
+    "Invoke-WebRequest",
+    "Invoke-RestMethod",
+    "\\biwr\\b",
+    "\\birm\\b"
+  ],
+  "confirm_commands": [
+    "pip\\s+install",
+    "conda\\s+install",
+    "git\\s+commit",
+    "git\\s+checkout\\s+--",
+    "git\\s+restore",
+    "git\\s+rebase",
+    "git\\s+merge"
+  ],
+  "post_edit_checks": [
+    {"name": "ruff lint", "command": "ruff check --fix {path}"},
+    {"name": "ruff format", "command": "ruff format {path}"},
+    {"name": "house style", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
+  ],
+  "stop_checks": [
+    {"name": "unit tests", "command": "python -m pytest -q -x --no-header -p no:cacheprovider", "when_path_exists": "tests"},
+    {"name": "output reconciliation", "command": "python .github/skills/model-reconciliation/scripts/compare_outputs.py recon/recon_config.xlsx", "when_path_exists": "recon/recon_config.xlsx"}
+  ],
+  "max_stop_retries": 2,
+  "max_report_chars": 3000
+}

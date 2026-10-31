@@ -1,0 +1,31 @@
+---
+name: stakeholder-update
+description: "Turn finished code or model work into a stakeholder update: a 3-slide deck outline, a status email, or a leadership summary. Use when the user asks for an update, status, summary for a manager, slides about the work, or what to tell stakeholders."
+---
+
+# Stakeholder update
+
+The reader is busy and not technical. Show the result, the method in brief, and why it matters.
+
+## Inputs to read first
+
+- The Git log and diff for the work period, the change records, and the latest `recon/results/` summary.
+- Ask the user for the audience and the date range if they are not clear.
+
+## Deck: 3 slides maximum
+
+1. **Summary.** One headline sentence with the result. Three bullets maximum.
+2. **What was done and how.** Steps in plain words. One simple diagram or table if it helps. No code.
+3. **Why it matters.** Impact in time saved, risk reduced, controls added, or decisions made possible. Use numbers only when they come from a file. Name the source in the speaker notes.
+
+If the repo has a deck script with the company template (python-pptx), write the slide content as data for that script. Do not build a layout in code.
+
+## Email
+
+Subject line with the result. Then: what is done, what is next, what you need from the reader (if anything), and the risks. Under 150 words.
+
+## Rules
+
+- Write with the ASD-STE100 writing skill in STE-flavored mode. No em dashes.
+- No number without a source file. If a number is an estimate, say "about" and say how it was estimated.
+- Do not claim a control or a test that did not run. If reconciliation failed or did not run, say so.

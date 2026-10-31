@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/guard_tool_use.py",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/check_python_edit.py",
+        "timeoutSec": 90
+      }
+    ],
+    "agentStop": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/run_stop_checks.py",
+        "timeoutSec": 900
+      }
+    ]
+  }
+}
