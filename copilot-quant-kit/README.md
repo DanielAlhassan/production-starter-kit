@@ -49,7 +49,7 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
     model-documentation/           MRM documentation template and procedure
     stakeholder-update/            3-slide deck, status email
     workflow-evidence/             summarize_audit.py: counts from the audit log (blocks, issues caught, checks run)
-    company-deck/                  Decks in the company template: inspect_template.py (brand.yaml, layout_map.yaml), render_deck.py (deck YAML to .pptx)
+    company-deck/                  Decks in the company template: inspect_template.py (brand, layouts, example-slide catalog, brand diagnosis), render_deck.py (copies example slides and fills them from a deck YAML)
   agents/
     model-builder.agent.md         Runs a spec from your brain dump agent, small steps, change record at the end
     model-reviewer.agent.md        Read-only validator-style review
@@ -80,6 +80,7 @@ The kit does not replace your files. It adds to your brain dump agent, `python.i
    .github/skills/company-deck/assets/*.pptx
    .github/skills/company-deck/brand.yaml
    .github/skills/company-deck/layout_map.yaml
+   .github/skills/company-deck/slide_catalog.yaml
    ```
 5. Check `.github/hooks/scripts/hook_policy.json`. Change `protected_paths` to match your folders. The `*` in a pattern also matches subfolders.
 6. In VS Code, open Chat, set **Session Target** to **Copilot**, then type `/hooks`. You see `model-guardrails.json`. If hooks do not show, your enterprise settings can disable them. Ask IT.

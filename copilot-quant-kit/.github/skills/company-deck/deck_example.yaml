@@ -1,28 +1,26 @@
-output: out/loss_model_update.pptx
+# Example deck. source: n copies example slide n of the template (see slide_catalog.yaml).
+# Run from the project folder: python <skill folder>/scripts/render_deck.py <this file>
+output: data/output/decks/update.pptx
 slides:
+  - source: 1
+    title: Loss model refactor
+    subtitle: Update for RRP leadership, November 2026
+  - source: 2
+    title: Numbers unchanged after refactor
+    body:
+      - 1,440 values compared with baseline, 0 breaches
+      - {text: "Tolerance 1e-6 absolute, 1e-9 relative", level: 1}
+      - Input, implementation, output controls added
+    shapes:
+      Source note: "Source: data/output/recon/20261107/summary.csv"
+    notes: "Source: data/output/recon/20261107/summary.csv"
+  - source: 3
+    title: What the checks found
+    shapes:
+      Results table:
+        table:
+          columns: [Check, Result]
+          rows: [[Unit tests, PASS], [Reconciliation, PASS], [Edits blocked, "6"], [Issues fixed before review, "4"]]
   - layout: title_and_content
-    title: Loss model refactor complete, numbers unchanged
-    body:
-      - Loss model moved from Excel and notebook to one Python run()
-      - 1,440 values compared with the baseline, 0 breaches
-      - Input, implementation, and output controls added
-    notes: "Source: data/output/recon/20261107_101500/summary.csv"
-  - layout: two_content
-    title: What was done and how
-    body:
-      - Read inputs from data/input, settings from YAML
-      - One step file per calculation, called by run()
-      - Hooks checked every edit and ran the model before finish
-    body_2:
-      table:
-        columns: [Check, Result]
-        rows: [[Unit tests, PASS], [Reconciliation, PASS], [Edits blocked, "6"]]
-  - layout: title_and_content
-    title: Why it matters
-    body:
-      chart:
-        type: column
-        categories: [Before, After]
-        series: {Hours per run: [6, 0.5]}
-        number_format: "0.0"
-    notes: "Hours are the user's estimate."
+    title: Old method for comparison (bare layout)
+    body: [This slide uses the empty layout, Title is black here]
