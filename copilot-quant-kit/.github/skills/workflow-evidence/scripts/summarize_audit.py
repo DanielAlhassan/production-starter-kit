@@ -35,6 +35,7 @@ def main() -> None:
         tools = log[log["event"] == "tool_call"]
         edits = log[log["event"] == "post_edit_check"]
         stops = log[log["event"] == "stop_check"]
+        commits = log[log["event"] == "commit_check"]
         rows.append(
             {
                 "repo": Path(repo).resolve().name,
@@ -49,6 +50,8 @@ def main() -> None:
                 "edit_issues_caught": int((edits["failures"].fillna(0) > 0).sum()),
                 "finish_checks_run": len(stops),
                 "finish_checks_failed": int((stops["failures"].fillna(0) > 0).sum()),
+                "commit_checks_run": len(commits),
+                "commits_stopped": int((commits["failures"].fillna(0) > 0).sum()),
             }
         )
 

@@ -1,0 +1,6 @@
+#!/bin/sh
+# Model checks before each commit (works without Copilot hooks).
+# Python comes from: git config hooks.python, else "python" on PATH.
+# Skip once on purpose: git commit --no-verify
+PY=$(git config --get hooks.python || echo python)
+exec "$PY" "$HOME/.copilot/hooks/scripts/check_commit.py"

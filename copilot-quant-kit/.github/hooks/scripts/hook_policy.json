@@ -45,6 +45,14 @@
     {"name": "house style", "command": "python ~/.copilot/skills/python-house-style/check_style.py {path}", "when_path_exists": "~/.copilot/skills/python-house-style/check_style.py"},
     {"name": "house style (repo copy)", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
   ],
+  "commit_file_checks": [
+    {"name": "ruff lint", "command": "python -m ruff check {path}"},
+    {"name": "ruff format", "command": "python -m ruff format --check {path}"},
+    {"name": "house style", "command": "python ~/.copilot/skills/python-house-style/check_style.py {path}", "when_path_exists": "~/.copilot/skills/python-house-style/check_style.py"},
+    {"name": "house style (repo copy)", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
+  ],
+  "high_risk_paths": ["src/*", "assembly/*", "settings/*"],
+  "readonly_folders": ["data/input", "assets", "data/output/baseline"],
   "stop_checks": [
     {"name": "unit tests", "command": "python -m pytest -q -x --no-header -p no:cacheprovider", "when_path_exists": "tests", "timeout_sec": 300, "pass_exit_codes": [0, 5]},
     {"name": "model run", "command": "python -m assembly.driver", "when_path_exists": "assembly/driver.py", "timeout_sec": 600},

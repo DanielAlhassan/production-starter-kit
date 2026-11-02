@@ -33,6 +33,8 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
   hooks/
     model-guardrails.json          Hook config (Copilot harness format)
     scripts/
+      check_commit.py              Git pre-commit check (works without Copilot hooks)
+      lock_folders.py              Set or clear read-only on inputs, assets, baselines
       hook_policy.json             All hook settings: protected paths, blocked commands, checks
       guard_tool_use.py            preToolUse: blocks edits to data/input, assets, baselines, Excel, hook files; blocks push, hard reset, recursive delete, network calls; asks before pip install, commit, merge; logs every call
       check_python_edit.py         postToolUse: ruff lint, ruff format, and tools/check_style.py on each edited .py file; sends errors back to the agent
@@ -100,6 +102,23 @@ The scripts write output in both formats: the Copilot session target and the Loc
 6. Do not install the same hooks at user and project level. Both run, so every check runs twice.
 
 The reconciliation stays at project level (`.github/skills/model-reconciliation/` and `settings/recon.yaml`). The stop hook skips it in a project that does not have these files.
+
+## If your company blocks Copilot hooks
+
+If `/hooks` shows nothing and `chat.useHooks` is managed by your organization, the Copilot hooks do not run. Use these parts of the kit instead. Git and Windows run them, so Copilot settings do not affect them. They use the same `hook_policy.json`.
+
+1. **Commit check (Git pre-commit hook).**
+   - Copy `user-hooks/git-hooks/pre-commit` to `%USERPROFILE%\.copilot\git-hooks\`.
+   - Tell Git which Python to use (the one with pandas, pyyaml, and ruff), once:
+     `git config --global hooks.python "C:/path/to/envs/gcp312/python.exe"`
+   - In each model repo, once: `git config core.hooksPath "$HOME/.copilot/git-hooks"` (Git Bash).
+   - Each commit then checks every staged Python file (ruff, house style). If a staged file is in `src/`, `assembly/`, or `settings/` (`high_risk_paths`), it also runs the tests, the driver, and the reconciliation. A failure stops the commit. Results go to `.copilot-audit/` and `/workflow-evidence` counts them.
+   - To commit on purpose without checks (for example a baseline update): `git commit --no-verify`.
+2. **Read-only folders.** In the repo: `python ~/.copilot/hooks/scripts/lock_folders.py lock` sets every file in `data/input/`, `assets/`, and `data/output/baseline/` to read-only (`readonly_folders` in the policy). Edits by Copilot or by scripts fail. To change a file on purpose: `unlock`, change it, `lock`. Also add to `.vscode/settings.json`, so VS Code marks new files there read-only too:
+   ```json
+   "files.readonlyInclude": {"data/input/**": true, "assets/**": true, "data/output/baseline/**": true}
+   ```
+3. **Fresh-context review.** The instruction lines in `copilot-instructions-additions.md` tell Copilot to send high-risk changes to `/review-model` in a new chat. This is an instruction, not a hard block.
 
 ## Smoke test (5 minutes)
 
