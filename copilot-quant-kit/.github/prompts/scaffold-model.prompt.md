@@ -9,7 +9,9 @@ Set up the model ${input:model:model name}.
 Follow the layout in the model-structure instructions exactly.
 
 **If the repo has no `src/` yet:**
-1. Create `data/input/`, `data/output/`, `data/output/baseline/`, `data/output/recon/`, `assets/`, `settings/`, `src/`, `tests/`. Add a `.gitkeep` to each empty folder.
+1. Create `data/input/`, `data/output/`, `data/output/baseline/`, `data/output/recon/`, `assets/`, `settings/`, `src/`, `tests/`, `docs/`. Add a `.gitkeep` to each empty folder.
+   Create `docs/progress_log.md` with the progress-log script: `add setup "Project created with the standard layout" --tag done`.
+   Create `README.md`: purpose (ask me), layout, how to run.
 2. Create `settings/run.yaml` with the run values the user gives (dates, scenarios, regions, paths). Ask for them. Do not invent values.
 3. Create `src/run.py` with one callable `run()`: read `settings/run.yaml`, read inputs, call the steps, run the controls, write outputs. Leave step calls as a list the user fills in.
 4. If the user said this is a package, use `src/<model>/run.py` instead and also create step 5.

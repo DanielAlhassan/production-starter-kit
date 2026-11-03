@@ -9,8 +9,9 @@ The reader is busy and not technical. Show the result, the method in brief, and 
 
 ## Inputs to read first
 
-- The Git log and diff for the work period, the change records, and the latest summary in `data/output/recon/`.
-- Ask the user for the audience and the date range if they are not clear.
+- The scope from the progress-log skill (`progress.py scope <audience>`): what is new since the last update to this audience. Do not repeat items from earlier updates.
+- The change records and the latest summary in `data/output/recon/`.
+- Ask the user for the audience (manager or team) if it is not clear.
 
 ## Deck: 3 slides maximum
 
@@ -18,7 +19,7 @@ The reader is busy and not technical. Show the result, the method in brief, and 
 2. **What was done and how.** Steps in plain words. One simple diagram or table if it helps. No code.
 3. **Why it matters.** Impact in time saved, risk reduced, controls added, or decisions made possible. Use numbers only when they come from a file. Name the source in the speaker notes.
 
-Build the deck with the company-deck skill: write the 3 slides as a deck YAML file and run its renderer. Do not build slides any other way.
+Build the deck with the wf-deck skill: write the 3 slides as a deck YAML file and run its renderer. Do not build slides any other way.
 
 ## Email
 

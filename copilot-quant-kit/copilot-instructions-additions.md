@@ -12,6 +12,7 @@ Paste the block below into your existing `.github/copilot-instructions.md`. Do n
 - Do not edit `data/input/`, `assets/`, `data/output/baseline/`, Excel files, or `.github/hooks/`. Hooks block this. Ask the user.
 - A change to files in `src/`, `assembly/`, or `settings/` is high risk. Before you say done, run the tests and `/reconcile`, then tell the user to run `/review-model` in a new chat. Do not review your own change.
 - Files in `data/input/`, `assets/`, and `data/output/baseline/` are read-only. If an edit fails there, stop and tell the user. Do not change file permissions.
+- At the end of each task, use `/log-progress` or the progress-log skill to add 1 to 3 lines to `docs/progress_log.md`.
 - Say what you checked and what you did not check. Do not say "done" if a check failed or did not run.
 
 ## Writing

@@ -37,14 +37,15 @@ One chat per phase. Start a new chat (Ctrl+N) when the phase changes.
 
 | Situation | Command |
 |---|---|
+| End of a task: log progress | `/log-progress` |
 | Change log entry for MRM | `/change-record` |
 | Model documentation | "Use the model-documentation skill for src/<model>" |
 | Numbers on what the guardrails did | `/workflow-evidence 2026-11-01` |
-| 3-slide update or status email | "Use the stakeholder-update skill" |
+| Weekly update (manager 1:1, team meeting) | `/prepare-update manager` or `/prepare-update team` |
 
 ## 6. End of a phase
 
-1. Update the `## Current state` section in `docs/decision_log.md`: current commit, open items, verified commands, file owners, baselines. The next session starts with it.
+1. Update the `## Current state` section in `docs/progress_log.md`: current commit, open items, verified commands, file owners, baselines. The next session starts with it.
 2. Close the chat. Start the next phase in a new chat.
 
 ## Weekly

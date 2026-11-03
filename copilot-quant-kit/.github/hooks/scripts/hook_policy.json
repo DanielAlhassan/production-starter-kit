@@ -59,7 +59,7 @@
     {"name": "output reconciliation", "command": "python .github/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": ["settings/recon.yaml", ".github/skills/model-reconciliation/scripts/compare_outputs.py"], "timeout_sec": 300},
     {"name": "output reconciliation (user skill)", "command": "python ~/.copilot/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": ["settings/recon.yaml", "~/.copilot/skills/model-reconciliation/scripts/compare_outputs.py"], "timeout_sec": 300}
   ],
-  "handoff_files": ["docs/decision_log.md", "decision_log.md"],
+  "handoff_files": ["docs/progress_log.md", "docs/decision_log.md", "decision_log.md"],
   "handoff_heading": "## Current state",
   "handoff_max_chars": 1200,
   "recon_results_dir": "data/output/recon",

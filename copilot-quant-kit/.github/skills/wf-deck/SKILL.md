@@ -1,5 +1,5 @@
 ---
-name: company-deck
+name: wf-deck
 description: "Build PowerPoint decks in the company template: brand fonts, colors, backgrounds, and logos come from the template's own example slides, not from code. Use for any slide, deck, or presentation the user asks for, including stakeholder updates, model results, and demos."
 ---
 
