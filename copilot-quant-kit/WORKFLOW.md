@@ -22,6 +22,7 @@ One chat per phase. Start a new chat (Ctrl+N) when the phase changes.
 | Situation | Command |
 |---|---|
 | Run an approved spec | `model-builder` agent |
+| New workbook or model in Excel | `@model-blueprint` |
 | Side question in the middle of a task | `/fork` |
 | Chat has 20 to 30 turns | `/compact focus on <decisions to keep>` |
 
@@ -32,6 +33,9 @@ One chat per phase. Start a new chat (Ctrl+N) when the phase changes.
 | Did the numbers move? | `/reconcile` |
 | Review my change or a teammate's model | `/review-model src/<model>` (or the **Review this change** button after model-builder) |
 | Names and types do not match across models | `/data-dictionary data/output` |
+| Is this workbook ready to share? (VS Code) | `excel-audit` skill: `audit_workbook.py <file> --profile ...` |
+| Is this workbook ready to share? (Excel) | `@workbook-audit` |
+| Convert a workbook to Python: step 1 | `map_workbook.py <file> --out docs/<name>_formula_map.md` |
 
 ## 5. Record and share
 

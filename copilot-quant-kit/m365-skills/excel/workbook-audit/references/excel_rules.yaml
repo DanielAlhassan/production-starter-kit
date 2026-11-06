@@ -1,0 +1,185 @@
+# Excel rulebook: the single source for the audit script and the Copilot in Excel skills.
+# After a change, copy this file to OneDrive: skills/workbook-standards/references/ and skills/workbook-audit/references/
+#
+# check: script  = audit_workbook.py checks it (Copilot also checks it)
+#        copilot = only Copilot in Excel can judge it
+# profiles: core applies to every workbook; add data_prep, recon, or model.
+
+colors:
+  input: ["0000FF"]                 # typed-in numbers
+  formula: ["000000"]               # formulas and links inside the sheet (automatic color counts as black)
+  sheet_link: ["008000", "00B050"]  # formulas that use another sheet
+  file_link: ["FF0000"]             # formulas that use another file
+
+# Numbers allowed inside formulas (not partial inputs): counts and unit conversions.
+allowed_constants: [0, 1, 2, 4, 12, 100, 365, 1000, 1000000]
+
+volatile_functions: [INDIRECT, OFFSET, NOW, TODAY, RAND, RANDBETWEEN]
+
+# Sheets treated as raw data: no color or partial-input checks (data comes in as it is).
+raw_sheet_words: [raw, extract, source, data_in]
+
+rules:
+  # ---- Core: every workbook ----
+  - id: C01
+    profiles: [core]
+    severity: medium
+    check: script
+    rule: Font color shows the cell type. Blue for typed-in numbers, black for formulas, green for formulas that use another sheet, red for formulas that use another file.
+    fix: Change the font color to match the cell type. Do not change the content.
+  - id: C02
+    profiles: [core]
+    severity: high
+    check: script
+    rule: No partial inputs. A formula must not contain a typed-in number (for example =A1*1.05). Put the number in its own blue input cell and link to it.
+    fix: Move the number to a labeled input cell in the inputs area. Replace the number in the formula with a link to that cell.
+  - id: C03
+    profiles: [core]
+    severity: high
+    check: script
+    rule: The same formula along a row (or down a column). One cell with a different formula in a consistent row is an error or a hidden override.
+    fix: Make the cell match its neighbors. If the difference is intended, move the logic to its own labeled row.
+  - id: C04
+    profiles: [core]
+    severity: high
+    check: script
+    rule: "No error values (#REF!, #N/A, #DIV/0!, #VALUE!, #NAME?, #NUM!)."
+    fix: Find the cause. Fix the reference or the input. Do not hide the error.
+  - id: C05
+    profiles: [core]
+    severity: medium
+    check: script
+    rule: No links to other files unless the source file is named on the cover or inputs sheet.
+    fix: Copy the source values into an input or raw sheet with the source noted, or document the link.
+  - id: C06
+    profiles: [core]
+    severity: low
+    check: script
+    rule: No merged cells. Use Center Across Selection for headings.
+    fix: Unmerge. Use Format Cells, Alignment, Center Across Selection.
+  - id: C07
+    profiles: [core]
+    severity: medium
+    check: script
+    rule: No hidden sheets unless the cover sheet says why.
+    fix: Unhide the sheet, or add a note on the cover sheet.
+  - id: C08
+    profiles: [core]
+    severity: low
+    check: script
+    rule: No volatile functions (INDIRECT, OFFSET, NOW, TODAY, RAND). They recalculate all the time and hide the dependency chain.
+    fix: Use INDEX or XLOOKUP for references. Put dates in an input cell.
+  - id: C09
+    profiles: [core]
+    severity: low
+    check: script
+    rule: No whole-column references (A:A) in formulas.
+    fix: Use an Excel Table reference or a fixed range.
+  - id: C10
+    profiles: [core]
+    severity: medium
+    check: copilot
+    rule: Each input is entered once. Every other use links directly to that cell, not to a copy of a copy.
+    fix: Point each use to the original input cell.
+  - id: C11
+    profiles: [core]
+    severity: low
+    check: copilot
+    rule: Every row label has units, or the sheet has a global units marker at the top left.
+    fix: Add the units in brackets after the label, for example "Balance (USD mm)".
+  - id: C12
+    profiles: [core]
+    severity: low
+    check: copilot
+    rule: Every sheet has a title in the first row that says what the sheet shows.
+    fix: Add a title in A1.
+
+  # ---- Data prep ----
+  - id: D01
+    profiles: [data_prep]
+    severity: high
+    check: script
+    rule: Lookups are exact match. VLOOKUP and HLOOKUP need FALSE (or 0) as the last argument; MATCH needs 0.
+    fix: Add FALSE as the last argument, or change to XLOOKUP.
+  - id: D02
+    profiles: [data_prep]
+    severity: medium
+    check: script
+    rule: No IFERROR or IFNA around a lookup. A failed lookup must show, not turn into a blank or zero.
+    fix: Remove the wrapper. Add a separate check column that counts misses.
+  - id: D03
+    profiles: [data_prep]
+    severity: low
+    check: script
+    rule: Prefer XLOOKUP or INDEX/MATCH to VLOOKUP and HLOOKUP. They do not break when columns move.
+    fix: Change to XLOOKUP with exact match.
+  - id: D04
+    profiles: [data_prep]
+    severity: medium
+    check: copilot
+    rule: Raw data sheets are not edited. All cleaning happens on other sheets or in Power Query.
+    fix: Restore the raw sheet from the source. Move the change to a cleaning step.
+  - id: D05
+    profiles: [data_prep]
+    severity: medium
+    check: copilot
+    rule: Lookup keys are unique, and row counts tie from raw to output (with the difference explained).
+    fix: Add a check that counts duplicate keys and compares row counts.
+
+  # ---- Controls and recon ----
+  - id: R01
+    profiles: [recon]
+    severity: high
+    check: copilot
+    rule: Tolerances are input cells (blue), not numbers in formulas.
+    fix: Put the tolerance in a labeled input cell and link to it.
+  - id: R02
+    profiles: [recon]
+    severity: medium
+    check: copilot
+    rule: Every comparison has a Difference column and a Status column (PASS or FAIL against the tolerance).
+    fix: Add the two columns next to the compared values.
+  - id: R03
+    profiles: [recon]
+    severity: medium
+    check: copilot
+    rule: A summary shows counts of matched, unmatched, and breaks, and one master check cell (0 = all pass).
+    fix: Add a summary block at the top or on a Checks sheet.
+
+  # ---- Financial model (CFI / Macabacus guidelines) ----
+  - id: M01
+    profiles: [model]
+    severity: low
+    check: script
+    rule: Number formats show negatives in brackets and zero as a dash. No currency symbols in cells; put the currency in the units marker.
+    fix: 'Use a custom format such as #,##0_);(#,##0);"-"_).'
+  - id: M02
+    profiles: [model]
+    severity: medium
+    check: copilot
+    rule: Each time period has its own column, the same in every schedule. Do not mix annual and quarterly columns side by side.
+    fix: Align period columns; move other periodicities to their own block.
+  - id: M03
+    profiles: [model]
+    severity: medium
+    check: copilot
+    rule: Each schedule has three parts. Enter (links in from upstream), Calculate (small steps), Exit (results that flow on). Balances that change over time use a corkscrew.
+    fix: Restructure the schedule into the three parts.
+  - id: M04
+    profiles: [model]
+    severity: medium
+    check: copilot
+    rule: Drivers sit in their own schedule with scenario switches tied to one master switch, and the active scenario shows on every page.
+    fix: Move drivers into a drivers schedule with a scenario switch.
+  - id: M05
+    profiles: [model]
+    severity: medium
+    check: copilot
+    rule: Model checks for critical balances, with a pass or fail summary on the cover sheet.
+    fix: Add checks and a summary on the cover sheet.
+  - id: M06
+    profiles: [model]
+    severity: low
+    check: copilot
+    rule: Statements and outputs contain links only, no calculations. Long formulas are split into small labeled steps.
+    fix: Move calculations into schedules; split long formulas.

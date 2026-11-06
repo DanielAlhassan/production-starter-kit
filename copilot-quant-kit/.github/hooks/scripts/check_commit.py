@@ -12,7 +12,8 @@ def main() -> None:
     commit_file_checks from hook_policy.json (ruff, house style; check only,
     no file changes). If a staged file matches high_risk_paths (model code,
     assembly, settings), also runs the stop_checks: tests, the model run, and
-    the output reconciliation. Any failure stops the commit. Each result goes
+    the output reconciliation. Any failure stops the commit. Staged Excel
+    files get commit_xlsx_checks (the workbook audit) as warnings only. Each result goes
     to the audit log. To skip once on purpose: git commit --no-verify.
     """
     policy = read_policy()
@@ -34,6 +35,12 @@ def main() -> None:
     for path in staged:
         if path.endswith(".py"):
             failures.extend(run_checks(policy["commit_file_checks"], root, path))
+    warnings = []
+    for path in staged:
+        if path.lower().endswith((".xlsx", ".xlsm")):
+            warnings.extend(
+                run_checks(policy.get("commit_xlsx_checks", []), root, path)
+            )
     high_risk = [
         p
         for p in staged
@@ -58,11 +65,16 @@ def main() -> None:
             "staged": len(staged),
             "high_risk": bool(high_risk),
             "failures": len(failures),
+            "excel_warnings": len(warnings),
         },
     )
     for path in protected:
         print(
             f"NOTE protected file in this commit: {path}. Commit it only if a person changed it on purpose."
+        )
+    for warning in warnings:
+        print(
+            f"WARNING (does not stop the commit):\n{warning[-policy['max_report_chars'] :]}"
         )
     if failures:
         print("\n\n".join(failures)[-policy["max_report_chars"] :])

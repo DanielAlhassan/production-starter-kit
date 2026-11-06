@@ -52,7 +52,8 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
     stakeholder-update/            3-slide deck, status email
     progress-log/                  progress.py: log lines in docs/progress_log.md; scope and record updates per audience (manager, team)
     workflow-evidence/             summarize_audit.py: counts from the audit log (blocks, issues caught, checks run)
-    wf-deck/                  Decks in the company template: inspect_template.py (brand, layouts, example-slide catalog, brand diagnosis), render_deck.py (copies example slides and fills them from a deck YAML)
+    excel-audit/                   excel_rules.yaml (the Excel rulebook), audit_workbook.py (rule breaks by severity; --fix-colors writes a copy), map_workbook.py (formula map in Markdown)
+    wf-deck/                       Decks in the company template: inspect_template.py (brand, layouts, example-slide catalog, brand diagnosis), render_deck.py (copies example slides and fills them from a deck YAML)
   agents/
     model-builder.agent.md         Runs a spec from your brain dump agent, small steps, change record at the end
     model-reviewer.agent.md        Read-only validator-style review
@@ -65,6 +66,7 @@ Opus is the same model in Copilot and in Claude Code. The difference is the harn
     reconcile.prompt.md            /reconcile: run the model, compare with baseline, summarize
     workflow-evidence.prompt.md    /workflow-evidence 2026-11-01
     data-dictionary.prompt.md      /data-dictionary data/output
+m365-skills/excel/                 Copilot in Excel skills for the OneDrive skills folder: workbook-standards, workbook-audit, model-blueprint
 user-hooks/model-guardrails.json   Hook config for user-level install (finds the scripts in the user folder from any shell)
 WORKFLOW.md                        One-page cheat sheet: which command in which phase
 copilot-instructions-additions.md  Lines to paste into your existing copilot-instructions.md
@@ -116,12 +118,28 @@ If `/hooks` shows nothing and `chat.useHooks` is managed by your organization, t
      `git config --global hooks.python "C:/path/to/envs/gcp312/python.exe"`
    - In each model repo, once: `git config core.hooksPath "$HOME/.copilot/git-hooks"` (Git Bash).
    - Each commit then checks every staged Python file (ruff, house style). If a staged file is in `src/`, `assembly/`, or `settings/` (`high_risk_paths`), it also runs the tests, the driver, and the reconciliation. A failure stops the commit. Results go to `.copilot-audit/` and `/workflow-evidence` counts them.
+   - A staged `.xlsx` or `.xlsm` file gets the Excel audit (`commit_xlsx_checks`). The result is a warning only; it does not stop the commit.
    - To commit on purpose without checks (for example a baseline update): `git commit --no-verify`.
 2. **Read-only folders.** In the repo: `python ~/.copilot/hooks/scripts/lock_folders.py lock` sets every file in `data/input/`, `assets/`, and `data/output/baseline/` to read-only (`readonly_folders` in the policy). Edits by Copilot or by scripts fail. To change a file on purpose: `unlock`, change it, `lock`. Also add to `.vscode/settings.json`, so VS Code marks new files there read-only too:
    ```json
    "files.readonlyInclude": {"data/input/**": true, "assets/**": true, "data/output/baseline/**": true}
    ```
 3. **Fresh-context review.** The instruction lines in `copilot-instructions-additions.md` tell Copilot to send high-risk changes to `/review-model` in a new chat. This is an instruction, not a hard block.
+
+## Excel skills
+
+One rulebook, `.github/skills/excel-audit/excel_rules.yaml`, drives two tools:
+
+- **In VS Code** (the `excel-audit` skill, or by hand):
+  - `python <skill>/scripts/audit_workbook.py Book.xlsx --profile data_prep recon --out audit.csv`
+  - `python <skill>/scripts/audit_workbook.py Book.xlsx --fix-colors` writes `Book_colors_fixed.xlsx`. The original does not change. Check charts, pivots, and macros in the copy: openpyxl can drop them.
+  - `python <skill>/scripts/map_workbook.py Book.xlsx --out docs/Book_formula_map.md`
+  - Profiles: core (always), `data_prep`, `recon`, `model`. Exit code 1 if a high-severity rule is broken.
+- **In Copilot in Excel** (M365):
+  1. Copy each folder in `m365-skills/excel/` to the `skills` folder in your OneDrive. The folder name must equal the `name` in its SKILL.md.
+  2. In Excel, open Copilot, then **Manage skills**, then **Refresh**.
+  3. Use `@workbook-audit`, `@model-blueprint`. `workbook-standards` applies when Copilot changes a workbook.
+- **After you change a rule:** copy `excel_rules.yaml` to `skills/workbook-standards/references/` and `skills/workbook-audit/references/` in OneDrive, then Refresh.
 
 ## Smoke test (5 minutes)
 

@@ -51,6 +51,9 @@
     {"name": "house style", "command": "python ~/.copilot/skills/python-house-style/check_style.py {path}", "when_path_exists": "~/.copilot/skills/python-house-style/check_style.py"},
     {"name": "house style (repo copy)", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
   ],
+  "commit_xlsx_checks": [
+    {"name": "excel audit", "command": "python ~/.copilot/skills/excel-audit/scripts/audit_workbook.py {path}", "when_path_exists": "~/.copilot/skills/excel-audit/scripts/audit_workbook.py", "timeout_sec": 120}
+  ],
   "high_risk_paths": ["src/*", "assembly/*", "settings/*"],
   "readonly_folders": ["data/input", "assets", "data/output/baseline"],
   "stop_checks": [
