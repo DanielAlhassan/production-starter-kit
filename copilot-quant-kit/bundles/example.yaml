@@ -1,0 +1,18 @@
+# Bundle spec for the finished refactor that Copilot copies the structure from.
+# Make the bundle: python tools/pack_files.py bundles/example.yaml
+# Change the paths to your finished module. Add the old version too, if you have it
+# (for example a copy in legacy/ or the old notebook), so Copilot sees before and after.
+
+name: example
+
+task: >
+  This is a finished refactor. Use it as the pattern for the structure, names,
+  settings, and tests of the next refactor. Do not change these files.
+
+code:
+  - src/<finished_module>
+  - settings/<finished_module>.yaml
+  - tests/test_<finished_module>.py
+  # - legacy/<finished_module>_old.py
+
+data: []

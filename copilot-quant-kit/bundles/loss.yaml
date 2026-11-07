@@ -1,0 +1,21 @@
+# Bundle spec: what Copilot needs for one task. Paths are from the repo root.
+# Make the bundle: python tools/pack_files.py bundles/loss.yaml
+
+name: loss
+
+# The task, in a few lines. It goes at the top of the bundle.
+task: >
+  Refactor the loss pre-process model to the same structure as the example
+  (bundles/out/example_bundle.txt). The outputs must not change.
+
+# Code and settings: folders or files. Notebooks are added as code and text cells, without outputs.
+code:
+  - src/loss
+  - settings/loss.yaml
+
+# Input data, so Copilot uses the real column names and types.
+data:
+  - data/input/loss
+
+# Optional: change a setting from bundle_settings.yaml for this bundle only.
+# data_rows: 10

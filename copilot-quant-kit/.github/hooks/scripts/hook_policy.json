@@ -1,0 +1,73 @@
+{
+  "audit_dir": ".copilot-audit",
+  "edit_tool_words": ["edit", "create", "write", "replace", "patch", "delete", "rename", "move", "insert"],
+  "shell_tool_words": ["bash", "powershell", "shell", "terminal", "execute"],
+  "protected_paths": [
+    ".github/hooks/*",
+    "*/.copilot/hooks/*",
+    "*/.copilot/skills/*",
+    "tools/house_style_terms.csv",
+    "tools/check_style.py",
+    "data/input/*",
+    "data/output/baseline/*",
+    "assets/*",
+    "*.xlsx",
+    "*.xlsm",
+    "*.xls"
+  ],
+  "blocked_commands": [
+    "git\\s+push",
+    "git\\s+reset\\s+--hard",
+    "git\\s+clean",
+    "rm\\s+-[a-z]*r",
+    "Remove-Item\\b.*-Recurse",
+    "\\brmdir\\b",
+    "\\bdel\\s+/s",
+    "\\bcurl\\b",
+    "\\bwget\\b",
+    "Invoke-WebRequest",
+    "Invoke-RestMethod",
+    "\\biwr\\b",
+    "\\birm\\b"
+  ],
+  "confirm_commands": [
+    "pip\\s+install",
+    "conda\\s+install",
+    "git\\s+commit",
+    "git\\s+checkout\\s+--",
+    "git\\s+restore",
+    "git\\s+rebase",
+    "git\\s+merge"
+  ],
+  "post_edit_checks": [
+    {"name": "ruff lint", "command": "ruff check --fix {path}"},
+    {"name": "ruff format", "command": "ruff format {path}"},
+    {"name": "house style", "command": "python ~/.copilot/skills/python-house-style/check_style.py {path}", "when_path_exists": "~/.copilot/skills/python-house-style/check_style.py"},
+    {"name": "house style (repo copy)", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
+  ],
+  "commit_file_checks": [
+    {"name": "ruff lint", "command": "python -m ruff check {path}"},
+    {"name": "ruff format", "command": "python -m ruff format --check {path}"},
+    {"name": "house style", "command": "python ~/.copilot/skills/python-house-style/check_style.py {path}", "when_path_exists": "~/.copilot/skills/python-house-style/check_style.py"},
+    {"name": "house style (repo copy)", "command": "python tools/check_style.py {path}", "when_path_exists": "tools/check_style.py"}
+  ],
+  "commit_xlsx_checks": [
+    {"name": "excel audit", "command": "python ~/.copilot/skills/excel-audit/scripts/audit_workbook.py {path}", "when_path_exists": "~/.copilot/skills/excel-audit/scripts/audit_workbook.py", "timeout_sec": 120}
+  ],
+  "high_risk_paths": ["src/*", "assembly/*", "settings/*"],
+  "readonly_folders": ["data/input", "assets", "data/output/baseline"],
+  "stop_checks": [
+    {"name": "unit tests", "command": "python -m pytest -q -x --no-header -p no:cacheprovider", "when_path_exists": "tests", "timeout_sec": 300, "pass_exit_codes": [0, 5]},
+    {"name": "model run", "command": "python -m assembly.driver", "when_path_exists": "assembly/driver.py", "timeout_sec": 600},
+    {"name": "output reconciliation", "command": "python .github/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": ["settings/recon.yaml", ".github/skills/model-reconciliation/scripts/compare_outputs.py"], "timeout_sec": 300},
+    {"name": "output reconciliation (user skill)", "command": "python ~/.copilot/skills/model-reconciliation/scripts/compare_outputs.py settings/recon.yaml", "when_path_exists": ["settings/recon.yaml", "~/.copilot/skills/model-reconciliation/scripts/compare_outputs.py"], "timeout_sec": 300}
+  ],
+  "handoff_files": ["docs/progress_log.md", "docs/decision_log.md", "decision_log.md"],
+  "handoff_heading": "## Current state",
+  "handoff_max_chars": 1200,
+  "recon_results_dir": "data/output/recon",
+  "prompt_log_chars": 500,
+  "subagent_rules": "Project rules: Follow .github/copilot-instructions.md. Layout: data/input, data/output, assets (read only), settings (YAML), src/run.py, assembly/driver.py and switchboard.py. Do not edit data/input, assets, data/output/baseline, or Excel files. Do only the task you were given. Return short findings with file:line. No em dashes.",
+  "max_stop_retries": 2,
+  "max_report_chars": 3000
+}

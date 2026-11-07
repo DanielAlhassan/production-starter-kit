@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/add_session_context.py",
+        "timeoutSec": 10
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/log_user_prompt.py",
+        "timeoutSec": 10
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/guard_tool_use.py",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/check_python_edit.py",
+        "timeoutSec": 90
+      }
+    ],
+    "subagentStart": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/add_subagent_rules.py",
+        "timeoutSec": 10
+      }
+    ],
+    "agentStop": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/run_stop_checks.py",
+        "timeoutSec": 1300
+      }
+    ]
+  }
+}
