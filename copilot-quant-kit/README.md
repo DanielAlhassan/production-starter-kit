@@ -141,6 +141,14 @@ One rulebook, `.github/skills/excel-audit/excel_rules.yaml`, drives two tools:
   3. Use `@workbook-audit`, `@model-blueprint`. `workbook-standards` applies when Copilot changes a workbook.
 - **After you change a rule:** copy `excel_rules.yaml` to `skills/workbook-standards/references/` and `skills/workbook-audit/references/` in OneDrive, then Refresh.
 
+## Refactor with M365 Copilot (no GitHub Copilot credits)
+
+- `bundles/bundle_settings.yaml`: settings for every bundle (rules files, data mode, size limit).
+- `bundles/<name>.yaml`: one spec per task (task, code, data).
+- `python tools/pack_files.py bundles/<name>.yaml` writes `bundles/out/<name>_bundle.txt`: rules, code, notebooks without outputs, and data samples in one file.
+- Attach the bundle in M365 Copilot. The `python-refactor` skill (`m365-skills/app/`) answers with complete files that start with `===== FILE: <path> =====`.
+- Paste the reply into `reply.txt`, then `python tools/unpack_files.py reply.txt` writes the files to `_from_copilot/`. Compare and copy in VS Code. Then run ruff, check_style, pytest, and the reconciliation.
+
 ## Smoke test (5 minutes)
 
 In a new Copilot chat:

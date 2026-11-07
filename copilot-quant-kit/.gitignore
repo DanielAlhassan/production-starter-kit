@@ -6,3 +6,5 @@ __pycache__/
 .github/skills/wf-deck/brand.yaml
 .github/skills/wf-deck/layout_map.yaml
 .github/skills/wf-deck/slide_catalog.yaml
+bundles/out/
+_from_copilot/

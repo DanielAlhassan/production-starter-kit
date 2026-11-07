@@ -1,0 +1,24 @@
+# Settings for every bundle that tools/pack_files.py makes. One file per repo.
+# A bundle spec (for example bundles/loss.yaml) can change any of these for itself.
+
+# House rules: added to the top of every bundle, so Copilot reads the repo rules, not a copy.
+rules:
+  - .github/copilot-instructions.md
+  - .github/instructions/python.instructions.md
+  - tools/house_style_terms.csv
+
+# Data files: "sample" adds the columns, types, and the first rows; "schema" adds the columns and types only.
+data_mode: sample
+data_rows: 20
+
+# Text files only. Other types are listed in the tree but their content is not added.
+text_types: [.py, .yaml, .yml, .md, .csv, .txt, .json, .toml, .sql, .ipynb]
+data_types: [.csv, .xlsx, .xlsm, .xls, .parquet]
+
+# Folders never packed.
+skip_folders: [.git, .venv, __pycache__, .copilot-audit, .ruff_cache, .pytest_cache, bundles]
+
+# Warn when a bundle is larger than this. Split the spec if Copilot cuts the file off.
+max_chars: 200000
+
+out_folder: bundles/out
